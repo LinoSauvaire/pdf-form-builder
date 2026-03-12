@@ -24,6 +24,8 @@ export default function FieldRectangle({
   const pixelWidth = (field.width / 100) * pageWidth;
   const pixelHeight = (field.height / 100) * pageHeight;
 
+  const isCheckbox = field.type === 'checkbox';
+
   return (
     <Rnd
       position={{ x: pixelX, y: pixelY }}
@@ -49,19 +51,44 @@ export default function FieldRectangle({
         e.stopPropagation();
         onSelect();
       }}
-      className={`rounded border-2 transition-all ${
+      className={`transition-all ${
+        isCheckbox ? 'rounded' : 'rounded-sm'
+      } ${
         isSelected
-          ? 'border-blue-600 bg-blue-500/20'
-          : 'border-blue-400 bg-blue-500/10 hover:bg-blue-500/15'
+          ? isCheckbox
+            ? 'border-2 border-green-600 bg-green-500/20'
+            : 'border-2 border-blue-600 bg-blue-500/20'
+          : isCheckbox
+          ? 'border-2 border-green-400 bg-green-500/10 hover:bg-green-500/15'
+          : 'border-2 border-blue-400 bg-blue-500/10 hover:bg-blue-500/15'
       }`}
       style={{ zIndex: isSelected ? 20 : 10 }}
       bounds="parent"
       enableResizing={isSelected}
     >
-      <div className="w-full h-full flex items-center justify-center pointer-events-none">
-        <span className="text-xs font-medium text-blue-900 bg-white/80 px-2 py-0.5 rounded shadow-sm">
-          {field.name}
-        </span>
+      <div className="w-full h-full flex items-center justify-center pointer-events-none p-1">
+        {isCheckbox ? (
+          <div className="flex items-center justify-center w-full h-full">
+            <CheckSquare 
+              size={Math.min(pixelWidth, pixelHeight) * 0.6} 
+              className={isSelected ? 'text-green-700' : 'text-green-600'}
+              strokeWidth={2.5}
+            />
+          </div>
+        ) : (
+          <div className="w-full h-full flex flex-col justify-center space-y-0.5">
+            <div className="flex items-center space-x-1 px-1">
+              <FileText 
+                size={Math.min(12, pixelHeight * 0.4)} 
+                className={isSelected ? 'text-blue-700' : 'text-blue-600'}
+              />
+              <div className="flex-1 space-y-0.5">
+                <div className={`h-0.5 bg-blue-600/40 rounded w-full`}></div>
+                <div className={`h-0.5 bg-blue-600/30 rounded w-3/4`}></div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </Rnd>
   );
