@@ -83,8 +83,8 @@ export default function FieldList({
       </div>
 
       {selectedField && (
-        <div className="p-6 border-t border-gray-200 bg-gray-50">
-          <h3 className="text-sm font-semibold text-gray-900 mb-4">Field Properties</h3>
+        <div className="p-6 border-t border-gray-200 bg-gray-50 space-y-4 overflow-auto">
+          <h3 className="text-sm font-semibold text-gray-900">Field Properties</h3>
           <div className="space-y-4">
             <div>
               <label className="block text-xs font-medium text-gray-700 mb-1.5">
@@ -118,13 +118,95 @@ export default function FieldList({
                   onClick={() => onUpdateField(selectedField.id, { type: 'checkbox' })}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-all flex items-center justify-center space-x-2 ${
                     selectedField.type === 'checkbox'
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-green-600 text-white'
                       : 'bg-white border border-gray-300 text-gray-700 hover:border-gray-400'
                   }`}
                 >
                   <CheckSquare size={16} />
                   <span>Checkbox</span>
                 </button>
+              </div>
+            </div>
+            
+            <div className="border-t border-gray-300 pt-4">
+              <h4 className="text-xs font-semibold text-gray-700 mb-3">Position & Size</h4>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    X (%)
+                  </label>
+                  <input
+                    type="number"
+                    value={selectedField.x.toFixed(2)}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (!isNaN(value) && value >= 0 && value <= 100) {
+                        onUpdateField(selectedField.id, { x: value });
+                      }
+                    }}
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Y (%)
+                  </label>
+                  <input
+                    type="number"
+                    value={selectedField.y.toFixed(2)}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (!isNaN(value) && value >= 0 && value <= 100) {
+                        onUpdateField(selectedField.id, { y: value });
+                      }
+                    }}
+                    step="0.1"
+                    min="0"
+                    max="100"
+                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Width (%)
+                  </label>
+                  <input
+                    type="number"
+                    value={selectedField.width.toFixed(2)}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (!isNaN(value) && value > 0 && value <= 100) {
+                        onUpdateField(selectedField.id, { width: value });
+                      }
+                    }}
+                    step="0.1"
+                    min="0.1"
+                    max="100"
+                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">
+                    Height (%)
+                  </label>
+                  <input
+                    type="number"
+                    value={selectedField.height.toFixed(2)}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      if (!isNaN(value) && value > 0 && value <= 100) {
+                        onUpdateField(selectedField.id, { height: value });
+                      }
+                    }}
+                    step="0.1"
+                    min="0.1"
+                    max="100"
+                    className="w-full px-2 py-1.5 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
               </div>
             </div>
           </div>
