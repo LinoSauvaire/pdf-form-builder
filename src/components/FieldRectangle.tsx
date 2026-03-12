@@ -7,6 +7,7 @@ interface FieldRectangleProps {
   isSelected: boolean;
   onUpdate: (updates: Partial<FormField>) => void;
   onSelect: () => void;
+  onDragStart: () => void;
   pageWidth: number;
   pageHeight: number;
 }
@@ -16,6 +17,7 @@ export default function FieldRectangle({
   isSelected,
   onUpdate,
   onSelect,
+  onDragStart,
   pageWidth,
   pageHeight,
 }: FieldRectangleProps) {
@@ -30,6 +32,7 @@ export default function FieldRectangle({
     <Rnd
       position={{ x: pixelX, y: pixelY }}
       size={{ width: pixelWidth, height: pixelHeight }}
+      onDragStart={onDragStart}
       onDragStop={(_, d) => {
         const relativeX = (d.x / pageWidth) * 100;
         const relativeY = (d.y / pageHeight) * 100;
@@ -51,7 +54,7 @@ export default function FieldRectangle({
         e.stopPropagation();
         onSelect();
       }}
-      className={`transition-all ${
+      className={`field-rectangle transition-all ${
         isCheckbox ? 'rounded' : 'rounded-sm'
       } ${
         isSelected

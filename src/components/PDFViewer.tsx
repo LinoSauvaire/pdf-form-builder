@@ -24,6 +24,7 @@ export default function PDFViewer({
 }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageScales, setPageScales] = useState<Map<number, { width: number; height: number }>>(new Map());
+  const [isDragging, setIsDragging] = useState(false);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -31,12 +32,18 @@ export default function PDFViewer({
   };
 
   const handlePageClick = (event: React.MouseEvent<HTMLDivElement>, pageNumber: number) => {
-    if (event.target !== event.currentTarget) {
+    if (isDragging) {
+      setIsDragging(false);
       return;
     }
 
-    const target = event.currentTarget;
-    const rect = target.getBoundingClientRect();
+    const target = event.target as HTMLElement;
+    if (target.closest('.field-rectangle')) {
+      return;
+    }
+
+    const currentTarget = event.currentTarget;
+    const rect = currentTarget.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
@@ -99,6 +106,7 @@ export default function PDFViewer({
                     isSelected={field.id === selectedFieldId}
                     onUpdate={(updates) => onUpdateField(field.id, updates)}
                     onSelect={() => onSelectField(field.id)}
+                    onDragStart={() => setIsDragging(true)}
                     pageWidth={pageScales.get(pageNumber)?.width || 0}
                     pageHeight={pageScales.get(pageNumber)?.height || 0}
                   />
