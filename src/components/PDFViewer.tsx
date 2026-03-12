@@ -31,6 +31,10 @@ export default function PDFViewer({
   };
 
   const handlePageClick = (event: React.MouseEvent<HTMLDivElement>, pageNumber: number) => {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
     const target = event.currentTarget;
     const rect = target.getBoundingClientRect();
     const x = event.clientX - rect.left;

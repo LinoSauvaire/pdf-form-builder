@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FormField } from './types';
 import PDFViewer from './components/PDFViewer';
 import FieldList from './components/FieldList';
@@ -8,6 +8,7 @@ function App() {
   const [fields, setFields] = useState<FormField[]>([]);
   const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
   const [pdfFile, setPdfFile] = useState<string | null>(null);
+  const copiedFieldRef = useRef<FormField | null>(null);
 
   const addField = (field: FormField) => {
     setFields([...fields, field]);
@@ -45,6 +46,47 @@ function App() {
       setSelectedFieldId(null);
     }
   };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'c') {
+        if (selectedFieldId) {
+          const selectedField = fields.find(f => f.id === selectedFieldId);
+          if (selectedField) {
+            copiedFieldRef.current = selectedField;
+            e.preventDefault();
+          }
+        }
+      }
+
+      if ((e.ctrlKey || e.metaKey) && e.key === 'v') {
+        if (copiedFieldRef.current) {
+          const newField: FormField = {
+            ...copiedFieldRef.current,
+            id: `field-${Date.now()}-${Math.random()}`,
+            x: copiedFieldRef.current.x + 2,
+            y: copiedFieldRef.current.y + 2,
+            name: `${copiedFieldRef.current.name}_copy`,
+          };
+          setFields(prev => [...prev, newField]);
+          setSelectedFieldId(newField.id);
+          e.preventDefault();
+        }
+      }
+
+      if (e.key === 'Delete' && selectedFieldId) {
+        const target = e.target as HTMLElement;
+        if (target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+          setFields(prev => prev.filter(f => f.id !== selectedFieldId));
+          setSelectedFieldId(null);
+          e.preventDefault();
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedFieldId, fields]);
 
   return (
     <div className="h-screen flex flex-col bg-gray-50">
