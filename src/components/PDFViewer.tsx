@@ -12,6 +12,7 @@ interface PDFViewerProps {
   onAddField: (field: FormField) => void;
   onUpdateField: (id: string, updates: Partial<FormField>) => void;
   onSelectField: (id: string | null) => void;
+  getNextFieldName: () => string;
 }
 
 export default function PDFViewer({
@@ -21,6 +22,7 @@ export default function PDFViewer({
   onAddField,
   onUpdateField,
   onSelectField,
+  getNextFieldName,
 }: PDFViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [pageScales, setPageScales] = useState<Map<number, { width: number; height: number }>>(new Map());
@@ -61,7 +63,7 @@ export default function PDFViewer({
       width: 15,
       height: 5,
       type: 'text',
-      name: `field_${fields.filter(f => f.page === pageNumber).length + 1}`,
+      name: getNextFieldName(),
     };
 
     onAddField(newField);

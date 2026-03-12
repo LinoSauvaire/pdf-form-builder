@@ -10,6 +10,47 @@ function App() {
   const [pdfFile, setPdfFile] = useState<string | null>(null);
   const copiedFieldRef = useRef<FormField | null>(null);
 
+  useEffect(() => {
+    const savedFields = localStorage.getItem('pdf-form-fields');
+    const savedPdfFile = localStorage.getItem('pdf-form-file');
+    
+    if (savedFields) {
+      try {
+        setFields(JSON.parse(savedFields));
+      } catch (e) {
+        console.error('Failed to load fields from localStorage', e);
+      }
+    }
+    
+    if (savedPdfFile) {
+      setPdfFile(savedPdfFile);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('pdf-form-fields', JSON.stringify(fields));
+  }, [fields]);
+
+  useEffect(() => {
+    if (pdfFile) {
+      localStorage.setItem('pdf-form-file', pdfFile);
+    } else {
+      localStorage.removeItem('pdf-form-file');
+    }
+  }, [pdfFile]);
+
+  const getNextFieldName = (): string => {
+    const fieldNumbers = fields
+      .map(f => {
+        const match = f.name.match(/^field_(\d+)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      })
+      .filter(n => n > 0);
+    
+    const maxNumber = fieldNumbers.length > 0 ? Math.max(...fieldNumbers) : 0;
+    return `field_${maxNumber + 1}`;
+  };
+
   const addField = (field: FormField) => {
     setFields([...fields, field]);
     setSelectedFieldId(field.id);
@@ -66,7 +107,7 @@ function App() {
             id: `field-${Date.now()}-${Math.random()}`,
             x: copiedFieldRef.current.x + 2,
             y: copiedFieldRef.current.y + 2,
-            name: `${copiedFieldRef.current.name}_copy`,
+            name: getNextFieldName(),
           };
           setFields(prev => [...prev, newField]);
           setSelectedFieldId(newField.id);
@@ -123,6 +164,7 @@ function App() {
               onAddField={addField}
               onUpdateField={updateField}
               onSelectField={setSelectedFieldId}
+              getNextFieldName={getNextFieldName}
             />
           ) : (
             <div className="h-full flex items-center justify-center">
